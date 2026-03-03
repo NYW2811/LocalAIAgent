@@ -23,3 +23,4 @@ while True:
     result = chain.invoke({"reviews":[], "question": question})
     print(result)
  
+#esto es para el merge q loco
