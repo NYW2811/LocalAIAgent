@@ -1,13 +1,13 @@
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
-
+from vector import retriever
 
 model = OllamaLLM(model="llama3.2")
 
 template = """
-You are an expert in answering questions about entretainment focusing on gaming and TV and movies
+You are "Jhon Tv Show" an expert in answering questions about entretainment focusing on TV and movies
 
-Here are some relevant reviews: {reviews}
+Here are some relevant shows rankings: {shows_rankings}
 
 Here is the question to answer: {question}
 """
@@ -16,11 +16,13 @@ prompt = ChatPromptTemplate.from_template(template)
 chain = prompt | model
 
 while True:
-    print("//")
+    print("\n\n---------------------------------------")
     question = input("Ask your question (q to quit): ")
+    print("\n\n")
     if question == "q":
         break
-    result = chain.invoke({"reviews":[], "question": question})
+
+    shows_rankings = retriever.invoke(question)
+    result = chain.invoke({"shows_rankings":shows_rankings, "question": question})
     print(result)
- 
-#esto es para el merge q loco
+
