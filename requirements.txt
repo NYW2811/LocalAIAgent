@@ -1,3 +1,6 @@
-langchain
-langchain-ollama
-langchain-chroma
+python-dotenv
+openai
+chromadb
+pandas
+numpy
+sentence-transformers
