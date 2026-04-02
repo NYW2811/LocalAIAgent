@@ -1,0 +1,35 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+*.env
+*.venv
+
+# Flask debug and log files
+instance/
+*.log
+*.pid
+
+# IDE settings
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+poetry.lock
+
+# CT
+node_modules
+ibmce-ci-cd-scripts/
+.DS_Store
+*.env
+.npmrc
+.vscode
+.cveignore*
+ct-cve-ignore*
+\chroma_db
