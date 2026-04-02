@@ -7,14 +7,12 @@ import os
 load_dotenv('.env')
 API_KEY = os.getenv("API_KEY")
 BASE_URL = os.getenv("BASE_URL")
+MODEL_NAME = os.getenv("MODEL_NAME")  # or use "local-model"
 
 client = OpenAI(
     api_key=API_KEY,
     base_url=BASE_URL
 )
-
-# Leave model empty - LM Studio uses whatever is loaded
-MODEL_NAME = "qwen/qwen3-4b-2507"  # or use "local-model"
 
 template = """
 You are "Jhon Tv Show" an expert in answering questions about entretainment focusing on TV and movies
@@ -42,7 +40,6 @@ while True:
         )
         if response.choices and response.choices[0]:
             message = response.choices[0].message
-            # Qwen models use reasoning_content for the actual response
             output = message.content or getattr(message, 'reasoning_content', '')
             print(output)
         else:
