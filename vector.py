@@ -4,11 +4,12 @@ from langchain_core.documents import Document
 import os
 import pandas as pd
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
 
 
 
-df = pd.read_csv("metacritic_tv_shows.csv")
-embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+df = pd.read_csv(r"C:\Users\karol\Documents\LocalAIAgent\data\metacritic_tv_shows.csv")
+embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")
 
 db_location = "./chrome_lanchain_db"
 add_documents = not os.path.exists(db_location)
@@ -18,9 +19,9 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 
-if add_documents:
-    documents = []
-    ids = []
+
+documents = []
+ids = []
     
     
 

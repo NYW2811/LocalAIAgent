@@ -1,8 +1,17 @@
-from langchain_ollama.llms import OllamaLLM
+"""
+Este programa es una reestructuración del main anterior. Para que funcione en cada máquina, el modelo debe ser cambiado por
+el usuario. 
+"""
+
+
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 from vector import retriever
 
-model = OllamaLLM(model="llama3.2")
+model = ChatOpenAI(
+    base_url="http://localhost:11434/v1",
+    api_key="ollama",
+    model="qwen3:4b")   #Este es el modelo que deben cambiar para que funcione.
 
 template = """
 You are "Jhon Tv Show" an expert in answering questions about entretainment focusing on TV and movies
@@ -24,5 +33,5 @@ while True:
 
     shows_rankings = retriever.invoke(question)
     result = chain.invoke({"shows_rankings":shows_rankings, "question": question})
-    print(result)
+    print(result.content)
 
