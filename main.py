@@ -2,7 +2,11 @@ from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from vector import retriever
 
-model = OllamaLLM(model="llama3.2")
+try:
+    model = OllamaLLM(model="llama3.2")
+except Exception as e:
+    print(f"no sé, error: {e}")
+    exit(1)
 
 template = """
 You are "Jhon Tv Show" an expert in answering questions about entretainment focusing on TV and movies
@@ -22,7 +26,16 @@ while True:
     if question == "q":
         break
 
-    shows_rankings = retriever.invoke(question)
-    result = chain.invoke({"shows_rankings":shows_rankings, "question": question})
-    print(result)
+    try:
+        shows_rankings = retriever.invoke(question)
+    except Exception as e:
+        print(f"no sé, error: {e}")
+        continue
+
+    try:
+        result = chain.invoke({"shows_rankings":shows_rankings, "question": question})
+        print(result)
+    except:
+        print(f"Error con el modelo {e}")
+        continue
 
