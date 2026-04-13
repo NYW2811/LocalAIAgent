@@ -10,7 +10,8 @@ __pycache__/
 
 .ipynb_checkpoints/
 
-chrome_langchain_db/
+chrome_lanchain_db/
+.sqlite3
 
 .DS_Store
 Thumbs.db

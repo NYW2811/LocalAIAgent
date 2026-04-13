@@ -4,7 +4,7 @@ from langchain_core.documents import Document
 import os
 import pandas as pd
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+
 
 
 
