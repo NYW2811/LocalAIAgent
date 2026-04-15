@@ -1,3 +1,7 @@
 langchain
+langchain-text-splitters
 langchain-ollama
 langchain-chroma
+pandas
+ragas
+datasets

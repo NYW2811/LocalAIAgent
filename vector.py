@@ -18,35 +18,32 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 
+documents = []
+ids = []
+
 if add_documents:
-    documents = []
-    ids = []
-    
-    
+    for i, row in df.iterrows():
+        title = str(row["title"]) if pd.notna(row["title"]) else ""
+        description = str(row["description"]) if pd.notna(row["description"]) else ""
 
+        full_text = f"{title}.\n{description}"
 
-for i, row in df.iterrows():
-    title = str(row["title"]) if pd.notna(row["title"]) else ""
-    description = str(row["description"]) if pd.notna(row["description"]) else ""
+        chunks = text_splitter.split_text(full_text)
 
-    full_text = f"{title}.\n{description}"
-
-    chunks = text_splitter.split_text(full_text)
-
-    for j, chunk in enumerate(chunks):
-        documents.append(
-            Document(
-                page_content=chunk,
-                metadata={
-                    "title": title,
-                    "metascore": row["metascore"],
-                    "userscore": row["userscore"],
-                    "date": row["releaseDate"]
-                },
-                id=f"{i}_{j}"
+        for j, chunk in enumerate(chunks):
+            documents.append(
+                Document(
+                    page_content=chunk,
+                    metadata={
+                        "title": title,
+                        "metascore": row["metascore"],
+                        "userscore": row["userscore"],
+                        "date": row["releaseDate"]
+                    },
+                    id=f"{i}_{j}"
+                )
             )
-        )
-        ids.append(f"{i}_{j}")
+            ids.append(f"{i}_{j}")
 
 vector_store = Chroma(
     collection_name="tv_shows_ranking",
