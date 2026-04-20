@@ -7,8 +7,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 
-df = pd.read_csv("metacritic_tv_shows.csv")
-embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+df = pd.read_csv("data/metacritic_tv_shows.csv")
+embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")  #<-- Aquí se modifica el modelo de embeddings
 
 db_location = "./chrome_lanchain_db"
 add_documents = not os.path.exists(db_location)

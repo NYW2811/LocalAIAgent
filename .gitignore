@@ -6,3 +6,12 @@ __pycache__/
 *.pyc
 .env
 .ipynb_checkpoints/
+# Chroma vector DB
+chroma/
+chroma_db/
+persist_directory/
+db/
+
+# Archivos internos de Chroma
+*.sqlite3
+*.parquet

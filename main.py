@@ -1,16 +1,23 @@
 """
 Modificaciones: 
--Eliminaicón del ciclo while para interacción con usuario.
+-Cambio del formado ChatOllama por ChatOpenAI
 -Implememtación de nueva función ejecutar_rag (revisar abajo)
 """
 
 
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 from vector import retriever
+import os
 
 try:
-    model = OllamaLLM(model="llama3.2")
+    model = ChatOpenAI(
+        model=os.getenv("MODEL_NAME", "phi3:latest"),  #<-- Aquí se configura el nombre del modelo
+        temperature=0,
+        api_key=os.getenv("OPENAI_API_KEY", "ollama"),
+        base_url=os.getenv("BASE_URL", "http://localhost:11434/v1")
+    )
 except Exception as e:
     print(f"Error al cargar el modelo. Cambie la ruta del modelo e intente nuevamente.: {e}")
     exit(1)
@@ -37,13 +44,12 @@ while True:
 
     shows_rankings = retriever.invoke(question)
     result = chain.invoke({"shows_rankings":shows_rankings, "question": question})
-    print(result)
+    print(result.content)
 
 
 
 #Función final que es útil para ragas.
 #NOTA: RECIBE DESCRIPCIÓN, TÍTULO Y METADATA. 
-#Quité el while xd
 
 def ejecutar_rag(question):
     docs = []
