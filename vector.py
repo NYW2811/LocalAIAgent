@@ -4,6 +4,7 @@ from langchain_core.documents import Document
 import os
 import pandas as pd
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
 
 """
 
@@ -59,8 +60,18 @@ retriever = vector_store.as_retriever(
     search_kwargs={"k":5}
 )
 """
+"""
 embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")
+"""
 
+model_name = os.getenv("EMBEDDING_MODEL", "all-minilm:l6-v2")
+provider = os.getenv("EMBEDDING_PROVIDER", "ollama") # 'ollama' o 'openai'
+
+# 2. Elegimos la clase según el proveedor
+if provider.lower() == "openai":
+    embeddings = OpenAIEmbeddings(model=model_name)
+else:
+    embeddings = OllamaEmbeddings(model=model_name)
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=800,
     chunk_overlap=100
