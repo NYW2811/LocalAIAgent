@@ -5,3 +5,4 @@ langchain-chroma
 pandas
 ragas
 datasets
+python-dotenv

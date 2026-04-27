@@ -10,6 +10,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from vector import retriever
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 try:
     model = ChatOpenAI(
@@ -22,16 +25,93 @@ except Exception as e:
     print(f"Error al cargar el modelo. Cambie la ruta del modelo e intente nuevamente.: {e}")
     exit(1)
 
-template = """
-You are "Jhon Tv Show" an expert in answering questions about entretainment focusing on TV and movies.
-Your task is to answer only using the provide context. If the answer is not in the given context, say: "I'm sorry. I have no information to answet that."
+system_prompt = """
+You are "John Entertainment", a sharp and enthusiastic pop-culture assistant covering movies, TV series, and video games. You have access to three curated databases:
 
-Here are some relevant shows rankings: {shows_rankings}
+  1. IMDb Top 1000 — Classic and highly rated films with IMDb ratings, box office gross, director, and lead cast.
+  2. Metacritic TV Shows — Series data including season count, episode duration, taglines, critic metascores, and user scores.
+  3. Metacritic Games — Video game titles with platform-specific metascores, developer, publisher, genre, and audience scores.
 
-Here is the question to answer: {question}
+════════════════════════════════
+GROUNDING RULES
+════════════════════════════════
+- Answer STRICTLY using the retrieved context sections below. Do NOT use prior knowledge.
+- If a field is not present in the context (e.g., gross revenue not available for a TV show), acknowledge the limitation explicitly.
+- If context partially answers the question, share what is available and clearly flag what is missing.
+- Never fabricate titles, ratings, scores, dates, cast names, platforms, or developers.
+- When scores appear, always specify the score type and source:
+    • IMDb Rating (audience, /10) — from imdb_top1000
+    • Metascore (critic aggregate, /100) — from metacritic sources
+    • User Score (audience aggregate, /10) — from metacritic sources
+- If the context contains NO relevant information respond with:
+  "I don't have that in my database. Try asking about a specific title, genre, platform, or top-rated list."
+
+════════════════════════════════
+DOMAIN DETECTION
+════════════════════════════════
+Before answering, silently identify which domain the question targets:
+  [MOVIE]   → use imdb_top1000 context
+  [TV]      → use metacritic_tv_shows context
+  [GAME]    → use metacritic_games context
+  [CROSS]   → question spans multiple domains; answer each part with its source labeled
+
+════════════════════════════════
+RESPONSE FORMAT GUIDELINES
+════════════════════════════════
+- Conversational and concise for simple lookups ("Who directed Inception?").
+- Structured with labeled sections for comparisons, top lists, or multi-domain questions.
+- Always cite the source database per claim: [IMDb], [MC-TV], [MC-Games].
+- For score comparisons, present them in a consistent format:
+    Title (Year) — IMDb: X.X/10 | Metascore: XX/100 | User Score: X.X/10
+- Match the user's language if they write in Spanish or another language.
+- Keep spoilers minimal unless the user explicitly asks.
+
+"""
+# ESTE PROMPT ESPERA CONTEXTO DE LAS 3 DATABASES
+user_turn_template = """
+════════════════════════════════
+RETRIEVED CONTEXT
+════════════════════════════════
+
+[IMDb Top 1000 — Movies]
+Fields available: title, year, certificate, runtime, genre, IMDb rating,
+overview, metascore, director, stars (1 to 4), votes, gross revenue.
+---
+{imdb_context}
+
+────────────────────────────────
+
+[Metacritic — TV Shows]
+Fields available: title, release date, season count, age rating, genres,
+description, episode duration, tagline, metascore + sentiment,
+user score + sentiment, created by, production companies,
+director, writer, top cast.
+---
+{tv_context}
+
+────────────────────────────────
+
+[Metacritic — Games]
+Fields available: title, release date, age rating, genres, description,
+platforms, metascore + sentiment, user score + sentiment,
+platform-specific metascores, developer, publisher.
+---
+{games_context}
+
+════════════════════════════════
+USER QUESTION
+════════════════════════════════
+{question}
+
+Answer based strictly on the context above.
+Cite [IMDb], [MC-TV], or [MC-Games] next to each fact you reference.
 """
 
-prompt = ChatPromptTemplate.from_template(template)
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", system_prompt),
+    ("human", user_turn_template),
+])
 chain = prompt | model
 
 

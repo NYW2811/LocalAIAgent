@@ -79,7 +79,7 @@ for index, (q, g_t) in enumerate(zip(questions, ground_truths), start=1):
     dataset.append({
         "question": q,
         "answer": result["answer"],
-        "contexts": list(result["contexts"]),  # 🔥 IMPORTANTE
+        "contexts": list(result["contexts"]),
         "ground_truth": g_t
     })
 
