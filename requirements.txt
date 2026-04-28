@@ -6,3 +6,4 @@ pandas
 ragas
 datasets
 python-dotenv
+sentence-transformers

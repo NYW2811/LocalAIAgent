@@ -65,7 +65,7 @@ embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")
 """
 
 model_name = os.getenv("EMBEDDING_MODEL", "all-minilm:l6-v2")
-provider = os.getenv("EMBEDDING_PROVIDER", "ollama") # 'ollama' o 'openai'
+provider = os.getenv("EMBEDDING_PROVIDER", "ollama")
 
 # 2. Elegimos la clase según el proveedor
 if provider.lower() == "openai":
@@ -116,9 +116,9 @@ def build_vectordb(df, collection_name, persist_dir):
 
 
 #Estos son los df xd
-df_tv = pd.read_csv("data\metacritic_tv_shows.csv")
-df_games = pd.read_csv("data\metacritic_games.csv")
-df_imdb = pd.read_csv("data\imdb_top_1000.csv")
+df_tv = pd.read_csv(r"data\metacritic_tv_shows.csv")
+df_games = pd.read_csv(r"data\metacritic_games.csv")
+df_imdb = pd.read_csv(r"data\imdb_top_1000.csv")
 
 persit_dir = "./chroma_langchain_db"
 
