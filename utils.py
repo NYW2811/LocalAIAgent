@@ -33,6 +33,9 @@ def ejecutar_rag(question, retriever, chain):
 
     contexts_text = "\n\n".join(contexts)
     result = chain.invoke({
+        "imdb_context": contexts_text,
+        "tv_context": contexts_text,
+        "games_context": contexts_text,
         "shows_rankings": contexts_text,
         "question": question,
     })
