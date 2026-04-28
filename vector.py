@@ -2,65 +2,8 @@ import pandas as pd
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from utils import build_vectordb
-"""
 
-df_1 = pd.read_csv("data/metacritic_tv_shows.csv")
-embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")  #<-- Aquí se modifica el modelo de embeddings
-
-db_location = "./chrome_lanchain_db"
-add_documents = not os.path.exists(db_location)
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=800,      # puedes ajustar
-    chunk_overlap=100    # pequeño solapamiento
-)
-
-
-documents = []
-ids = []
-
-if add_documents:
-    for i, row in df_1.iterrows():
-        title = str(row["title"]) if pd.notna(row["title"]) else ""
-        description = str(row["description"]) if pd.notna(row["description"]) else ""
-        userscore = str(row["userscore"]) if pd.notna(row["userscore"]) else ""
-
-        full_text = f"{title}.\n{description}.\n{userscore}"
-
-        chunks = text_splitter.split_text(full_text)
-
-        for j, chunk in enumerate(chunks):
-            documents.append(
-                Document(
-                    page_content=chunk,
-                    metadata={
-                        "title": title,
-                        "metascore": row["metascore"],
-                        "userscore": row["userscore"],
-                        "date": row["releaseDate"]
-                    },
-                    id=f"{i}_{j}"
-                )
-            )
-            ids.append(f"{i}_{j}")
-
-vector_store = Chroma(
-    collection_name="tv_shows_ranking",
-    persist_directory=db_location,
-    embedding_function=embeddings
-)
-
-if add_documents:
-    vector_store.add_documents(documents=documents, ids=ids)
-
-retriever = vector_store.as_retriever(
-    search_kwargs={"k":5}
-)
-"""
-"""
-embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")
-"""
-
-##USAR EL SENTENCE_TRANSFORMERS DE PYTHON
+# Configuración de embeddings y text splitter
 
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"

@@ -1,11 +1,3 @@
-"""
-Modificaciones: 
--Cambio del formado ChatOllama por ChatOpenAI
--Implememtación de nueva función ejecutar_rag (revisar abajo)
-"""
-
-
-from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from vector import imdb_retriever, tv_retriever, games_retriever
