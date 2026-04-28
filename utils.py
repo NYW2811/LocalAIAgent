@@ -22,8 +22,49 @@ def _get_retriever_documents(retriever, question):
 
 
 def ejecutar_rag(question, retriever, chain):
-    docs = _get_retriever_documents(retriever, question)
+    """
+    Ejecuta RAG consultando uno o varios retrievers.
 
+    - `retriever` puede ser:
+      * un solo retriever (objeto) -> comportamiento legacy
+      * un dict con claves `imdb`, `tv`, `games` y valores retriever -> consultará los 3
+
+    Devuelve dict con `question`, `answer` y `contexts` (lista de strings combinada).
+    """
+
+    # Con el dict de retrievers, se consultan x separado :P
+    if hasattr(retriever, "items"):
+        contexts_map = {}
+        combined_contexts = []
+        for key, r in retriever.items():
+            docs = _get_retriever_documents(r, question)
+            if isinstance(docs, str) or not docs:
+                ctx_list = []
+            else:
+                ctx_list = [doc.page_content for doc in docs]
+            contexts_map[f"{key}_context"] = "\n\n".join(ctx_list)
+            combined_contexts.extend(ctx_list)
+
+        imdb_context = contexts_map.get("imdb_context", "")
+        tv_context = contexts_map.get("tv_context", "")
+        games_context = contexts_map.get("games_context", "")
+
+        result = chain.invoke({
+            "imdb_context": imdb_context,
+            "tv_context": tv_context,
+            "games_context": games_context,
+            "question": question,
+        })
+
+        answer = result.content if hasattr(result, "content") else str(result)
+        return {
+            "question": question,
+            "answer": answer,
+            "contexts": combined_contexts,
+        }
+
+    # Solo con un retriever
+    docs = _get_retriever_documents(retriever, question)
     if isinstance(docs, str):
         docs = []
     if not docs:
@@ -36,7 +77,6 @@ def ejecutar_rag(question, retriever, chain):
         "imdb_context": contexts_text,
         "tv_context": contexts_text,
         "games_context": contexts_text,
-        "shows_rankings": contexts_text,
         "question": question,
     })
 
@@ -99,7 +139,7 @@ def build_vectordb(df, collection_name, persist_dir, embeddings, text_splitter):
 #NOTA: RECIBE DESCRIPCIÓN, TÍTULO Y METADATA. 
 
 
-def ejecutar_rag_to_RAGAS(question):
+def ejecutar_rag_to_RAGAS(question, retriever, chain):
     docs = []
     if hasattr(retriever, "_get_relevant_documents"):
         docs = retriever._get_relevant_documents(question, run_manager=None)

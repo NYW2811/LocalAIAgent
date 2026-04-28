@@ -24,7 +24,13 @@ chain = prompt | model
 
 
 def ejecutar_rag(question):
-    return ejecutar_rag_utils(question, tv_retriever, chain)
+    # Pasar los tres retrievers como un dict para que utils consulte cada uno
+    retrievers = {
+        "imdb": imdb_retriever,
+        "tv": tv_retriever,
+        "games": games_retriever,
+    }
+    return ejecutar_rag_utils(question, retrievers, chain)
 
 
 while True:
