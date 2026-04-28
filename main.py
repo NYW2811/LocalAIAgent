@@ -35,7 +35,7 @@ Here are some relevant shows rankings: {shows_rankings}
 Here is the question to answer: {question}
 """
 
-prompt = ChatPromptTemplate.from_template.from_mesages([
+prompt = ChatPromptTemplate.from_template.from_messages([
     ("system", system_template),
     ("human", user_template),
 ])

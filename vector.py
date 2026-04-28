@@ -1,11 +1,10 @@
-from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 import os
 import pandas as pd
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
-
+from langchain_community.embeddings import HuggingFaceEmbeddings
 """
 
 df_1 = pd.read_csv("data/metacritic_tv_shows.csv")
@@ -64,14 +63,13 @@ retriever = vector_store.as_retriever(
 embeddings = OllamaEmbeddings(model="all-minilm:l6-v2")
 """
 
-model_name = os.getenv("EMBEDDING_MODEL", "all-minilm:l6-v2")
-provider = os.getenv("EMBEDDING_PROVIDER", "ollama")
+##USAR EL SENTENCE_TRANSFORMERS DE PYTHON
 
-# 2. Elegimos la clase según el proveedor
-if provider.lower() == "openai":
-    embeddings = OpenAIEmbeddings(model=model_name)
-else:
-    embeddings = OllamaEmbeddings(model=model_name)
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
+
+
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=800,
     chunk_overlap=100
@@ -110,7 +108,11 @@ def build_vectordb(df, collection_name, persist_dir):
     )
 
     if add_documents:
-        vector_store.add_documents(documents=documents, ids=ids)
+
+        for i in range(0, len(documents), 500):
+          vector_store.add_documents(
+          documents=documents[i:i+500],
+          ids=ids[i:i+500])
 
     return vector_store
 
