@@ -77,7 +77,9 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 def build_vectordb(df, collection_name, persist_dir):
     db_path = f"{persist_dir}/{collection_name}"
-    add_documents = not os.path.exists(db_path)
+    add_documents = len(Chroma( collection_name=collection_name,
+                                persist_directory=persist_dir, 
+                                embedding_function=embeddings ).get()["ids"]) == 0
 
     documents = []
     ids = []
@@ -131,6 +133,6 @@ games_db = build_vectordb(df_games, "Games", persist_dir=persit_dir)
 imdb_db = build_vectordb(df_imdb, "Imdb", persist_dir=persit_dir)
 
 #Estos son los retrievers
-movies_retriever = tv_db.as_retriever(search_kwargs={"k": 5})
-tv_retriever = games_db.as_retriever(search_kwargs={"k": 5})
-games_retriever = imdb_db.as_retriever(search_kwargs={"k": 5})
+tv_retriever = tv_db.as_retriever(search_kwargs={"k": 5})
+games_retriever = games_db.as_retriever(search_kwargs={"k": 5})
+imdb_retriever = imdb_db.as_retriever(search_kwargs={"k": 5})

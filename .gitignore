@@ -11,6 +11,7 @@ chroma/
 chroma_db/
 persist_directory/
 db/
+chroma_langchain_db/
 
 # Archivos internos de Chroma
 *.sqlite3

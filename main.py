@@ -8,7 +8,7 @@ Modificaciones:
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from vector import movies_retriever, tv_retriever, games_retriever
+from vector import imdb_retriever, tv_retriever, games_retriever
 import os
 
 try:
@@ -35,7 +35,7 @@ Here are some relevant shows rankings: {shows_rankings}
 Here is the question to answer: {question}
 """
 
-prompt = ChatPromptTemplate.from_template.from_messages([
+prompt = ChatPromptTemplate.from_messages([
     ("system", system_template),
     ("human", user_template),
 ])
