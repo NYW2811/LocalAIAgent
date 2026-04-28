@@ -9,6 +9,7 @@ from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from vector import imdb_retriever, tv_retriever, games_retriever
+from utils import ejecutar_rag as ejecutar_rag_utils
 import os
 
 try:
@@ -42,6 +43,10 @@ prompt = ChatPromptTemplate.from_messages([
 chain = prompt | model
 
 
+def ejecutar_rag(question):
+    return ejecutar_rag_utils(question, tv_retriever, chain)
+
+
 while True:
     print("\n\n---------------------------------------")
     question = input("Ask your question (q to quit): ")
@@ -49,59 +54,5 @@ while True:
     if question == "q":
         break
 
-    shows_rankings = tv_retriever.invoke(question)
-    result = chain.invoke({"shows_rankings":shows_rankings, "question": question})
-    print(result.content)
-    
-
-
-
-#Función final que es útil para ragas.
-#NOTA: RECIBE DESCRIPCIÓN, TÍTULO Y METADATA. 
-
-"""
-def ejecutar_rag(question):
-    docs = []
-    if hasattr(retriever, "_get_relevant_documents"):
-        docs = retriever._get_relevant_documents(question, run_manager=None)
-    elif hasattr(retriever, "get_relevant_documents"):
-        docs = retriever.get_relevant_documents(question)
-    elif hasattr(retriever, "retrieve"):
-        docs = retriever.retrieve(question)
-    elif hasattr(retriever, "invoke"):
-        docs = retriever.invoke(question)
-    else:
-        raise RuntimeError("El retriever no soporta métodos de búsqueda conocidos.")
-
-    if isinstance(docs, str):
-        print(f"[WARNING] El retriever devolvió una cadena en lugar de documentos para: {question}")
-        docs = []
-
-    if not docs:
-        print(f"[WARNING] No se encontraron documentos para la pregunta: {question}")
-
-    contexts = contexts = [doc.page_content for doc in docs]
-    contexts_text = "\n\n".join(contexts)
-
-    print(f"[DEBUG] Documentos encontrados: {len(docs)} para la pregunta: {question}")
-    if contexts_text:
-        print(f"[DEBUG] Contexto enviado al modelo (primeros 300 caracteres): {contexts_text[:300].replace('\n', ' ')}")
-    else:
-        print("[DEBUG] No hay contexto para enviar al modelo.")
-
-    result = chain.invoke({
-        "shows_rankings": contexts_text,
-        "question" : question
-    })
-    
-    if hasattr(result, "content"):
-        answer = result.content
-    else:
-        answer = str(result)
-
-    return {
-        "question": question,
-        "answer": answer,
-        "contexts": contexts
-    }
-"""
+    result = ejecutar_rag(question)
+    print(result["answer"])

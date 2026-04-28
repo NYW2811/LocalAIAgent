@@ -12,10 +12,10 @@ Al ejecutarse, el programa:
 from datasets import Dataset
 from main import ejecutar_rag
 import time
-from difflib import SequenceMatcher
 from ragas import evaluate
 from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
 from langchain_ollama import ChatOllama, OllamaEmbeddings
+from utils import similarity
 
 
 questions = [
@@ -93,9 +93,6 @@ dataset_evaluation = Dataset.from_list(dataset)
 # =========================
 # MÉTRICAS BÁSICAS
 # =========================
-
-def similarity(a, b):
-    return SequenceMatcher(None, a, b).ratio()
 
 exact_matches = sum(
     1

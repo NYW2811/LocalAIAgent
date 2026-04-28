@@ -17,3 +17,6 @@ chroma_langchain_db/
 *.sqlite3
 *.parquet
 chrome_lanchain_db/chroma.sqlite3
+
+# Datos
+data/
